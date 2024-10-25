@@ -2,17 +2,24 @@ import { Component, OnInit } from '@angular/core';
 import { ModelComponent } from '../shared/ui/model/model.component';
 import { BussineesCardFormComponent } from '../business-card-form/business-card-form.component';
 import { ToastrService } from 'ngx-toastr';
-import { BusinessCardservice } from '../../services/business-card.service';
+import { BusinessCardservice } from '../../services/BusinessCard/business-card.service';
 import { IBusinessCard } from '../shared/models/BusinessCard';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
+import { identifierName } from '@angular/compiler';
+import { ExportService } from '../../services/Files/Export/export.service';
 @Component({
   selector: 'app-bussineesCard',
   standalone: true,
-  imports: [CommonModule,ModelComponent, BussineesCardFormComponent],
+  imports: [CommonModule,ModelComponent, BussineesCardFormComponent,RouterLink],
   templateUrl: './business-card.component.html',
   styleUrl: './business-card.component.scss',
 })
 export class BussineesCardComponent implements OnInit {
+
+ImportFile() {
+console.log("import file ..");
+}
   isModelOpen = false;
   businessCards: IBusinessCard[] = [];
   bussineesCard!: IBusinessCard;
@@ -20,7 +27,8 @@ export class BussineesCardComponent implements OnInit {
   // isMenuOpen = false;
 
   constructor(
-    private BusinessCardservice: BusinessCardservice,
+    private businessCardservice: BusinessCardservice,
+    private exportService: ExportService,
     private toastr: ToastrService
   ) {}
 
@@ -35,39 +43,50 @@ export class BussineesCardComponent implements OnInit {
     }
   }
   getAllBusinessCards() {
-    this.BusinessCardservice.getAllBusinessCards().subscribe({
+    debugger;
+    this.businessCardservice.getBusinessCards().subscribe({
       next: (response) => {
-        if (response.data) {
-          this.businessCards = response.data;
+        console.log(response);
+        if (response.isSuccess ) {
+          this.businessCards = response.value?.data;
         }
       },
     });
-
   }
 
-  // Toggles the dropdown open/close based on the clicked item
-  toggleDropdown(id: string="") {
-    // this.activeDropdown = this.activeDropdown === id ? null : id;
+  newBusinessCard() {
+    this.bussineesCard =  {
+      name: '',
+      gender: 1,
+      dateOfBirth: (new Date()).toISOString(),
+      email: '',
+      phone: '',
+      address: '',
+    };
+
+    this.openModel();
   }
+
+
   loadBusinessCards(bussineesCard: IBusinessCard) {
     this.bussineesCard = bussineesCard;
     this.openModel();
   }
-  exportBusinessCardAsCsv(bussineesCard: IBusinessCard) {
-    // this.bussineesCard = bussineesCard;
-    // this.openModel();
-  }
-  exportBusinessCardAsXml(bussineesCard: IBusinessCard) {
-    // this.bussineesCard = bussineesCard;
-    // this.openModel();
-  }
 
+
+  exportBusinessCards(format: string ,IDs:string[]|undefined=undefined): void {
+    // this.exportService.exportAndDownloadBusinessCards(format,IDs).su
+  }
 
   deleteBusinessCard(id: string ="") {
-    this.BusinessCardservice.deleteBusinessCard(id).subscribe({
+    this.businessCardservice.deleteBusinessCards([id]).subscribe({
       next: (response) => {
-        this.toastr.success(response.message);
+        
+        if (response.isSuccess) {
+        this.toastr.success("Card deleted successfully.");
         this.getAllBusinessCards();
+        }
+
       },
     });
   }

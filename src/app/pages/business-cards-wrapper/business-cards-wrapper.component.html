@@ -1,0 +1,121 @@
+<div class="mat-elevation-z8 " >
+
+<div class="flex justify-between h-20 ">
+    <!-- Filter input field -->
+    <mat-form-field appearance="outline" class=" m-5">
+      <mat-label>Search</mat-label>
+      <input matInput (keyup)="applyFilter($event)" placeholder="Search records">
+    </mat-form-field>
+    <div class=" m-5 add-new-button">
+      <button mat-raised-button color="primary" (click)="openAddBusinessCardDialog()">Add New Business Card</button>
+    </div>
+</div>
+  <!-- Angular Material Table -->
+  <table mat-table   [dataSource]="dataSource" matSort class="full-width-table" matSortActive="name" matSortDirection="asc">
+
+    <!-- Checkbox Column for row selection -->
+    <ng-container matColumnDef="select" class="isHeader">
+      <th mat-header-cell *matHeaderCellDef>
+        <mat-checkbox (change)="selectAll($event.checked)"></mat-checkbox>
+      </th>
+      <td mat-cell *matCellDef="let row">
+        <mat-checkbox (change)="toggleSelection(row)" [checked]="selectedRows.includes(row)"></mat-checkbox>
+      </td>
+    </ng-container>
+    <!-- Name Column -->
+
+    <div class="w-20 overflow-x-clip test">
+      <ng-container matColumnDef="id" >
+        <th mat-header-cell *matHeaderCellDef > Id </th>
+        <td mat-cell *matCellDef="let row"> {{row.id}} </td>
+      </ng-container>
+    </div>
+    <!-- Name Column -->
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Name </th>
+      <td mat-cell *matCellDef="let row"> {{row.name}} </td>
+    </ng-container>
+
+    <!-- Gender Column -->
+    <ng-container matColumnDef="gender">
+      <th mat-header-cell *matHeaderCellDef> Gender </th>
+      <td mat-cell *matCellDef="let row"> {{row.gender === 1 ? 'Male' : 'Female'}} </td>
+    </ng-container>
+
+<!-- Date of Birth Column -->
+<ng-container matColumnDef="dateOfBirth">
+  <th mat-header-cell *matHeaderCellDef mat-sort-header> Date of Birth </th>
+  <td mat-cell *matCellDef="let row"> {{row.dateOfBirth | date: 'MMM d, yyyy'}} </td>
+</ng-container>
+
+<!-- Email Column -->
+<ng-container matColumnDef="email">
+  <th mat-header-cell *matHeaderCellDef mat-sort-header> Email </th>
+  <td mat-cell *matCellDef="let row"> {{row.email}} </td>
+</ng-container>
+
+<!-- Phone Column -->
+<ng-container matColumnDef="phone">
+  <th mat-header-cell *matHeaderCellDef mat-sort-header> Phone </th>
+  <td mat-cell *matCellDef="let row"> {{row.phone}} </td>
+</ng-container>
+
+<!-- Address Column -->
+<ng-container matColumnDef="address">
+  <th mat-header-cell *matHeaderCellDef mat-sort-header> Address </th>
+  <td mat-cell *matCellDef="let row"> {{row.address}} </td>
+</ng-container>
+
+<!-- photo Column -->
+<ng-container matColumnDef="photo">
+  <th mat-header-cell *matHeaderCellDef> Photo </th>
+  <td mat-cell *matCellDef="let row">
+    <img [src]="row.photo" alt="No Image" class="h-10 object-contain mx-auto">
+  </td>
+</ng-container>
+
+<!-- Last Update At Column -->
+<ng-container matColumnDef="lastUpdateAt">
+  <th mat-header-cell *matHeaderCellDef mat-sort-header> Last Update At </th>
+  <td mat-cell *matCellDef="let row"> {{row.lastUpdateAt | date: 'MMM d, yyyy \'at\' h:mm a'}} </td>
+</ng-container>
+
+    <!-- Actions Column for edit and delete buttons -->
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef> Actions </th>
+      <td mat-cell *matCellDef="let row">
+        <button mat-icon-button color="primary" (click)="editRow(row)">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button color="warn" (click)="deleteRowsDialog([row])">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <!-- Table Header Row -->
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <!-- Table Data Rows -->
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+
+  <div class="flex justify-between m-5 mt-7">
+      <!-- Export Buttons -->
+    <div class=" mx-5 export-buttons ">
+      <button mat-raised-button color="primary" [disabled]="selectedRows.length == 0" (click)="exportSelectedBusinessCards('csv')">Export to CSV</button>
+      <button mat-raised-button color="accent" [disabled]="selectedRows.length == 0" (click)="exportSelectedBusinessCards('xml')">Export to XML</button>
+    </div>
+
+        <!-- Pagination Controls -->
+    <mat-paginator class="my-0"
+    [pageSize]="pageSize"
+    [pageSizeOptions]="[10, 15, 20, 30, 40,50]"
+    [length]="totalRecords"
+    (page)="onPageChange($event)">
+  </mat-paginator>
+
+  <button mat-raised-button class="delete-btn mr-10" [disabled]="selectedRows.length == 0" (click)="deleteSelectedBusinessCardsDialog()">Delete</button>
+
+    </div>
+
+</div>

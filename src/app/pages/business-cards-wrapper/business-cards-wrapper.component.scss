@@ -1,0 +1,27 @@
+.full-width-table {
+  // width: 100%;
+}
+
+.delete-btn {
+ &:hover,&:focus{
+  font-weight: bolder;
+ }
+
+ &:not(:disabled){
+  background-color: red !important;
+  color: white ;
+ }
+
+}
+
+.export-buttons button {
+   margin-right: 10px;
+}
+
+.mat-column-id{
+  max-width: 65px !important;
+  overflow-x:hidden !important;
+  text-wrap: nowrap !important;
+}
+
+

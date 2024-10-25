@@ -1,0 +1,47 @@
+<h2 mat-dialog-title>Add New Business Card</h2>
+
+<form [formGroup]="businessCardForm">
+  <mat-form-field appearance="outline">
+    <mat-label>Name</mat-label>
+    <input matInput formControlName="name" placeholder="Name">
+    <mat-error *ngIf="businessCardForm.get('name')?.invalid">Name is required</mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Gender</mat-label>
+    <mat-select formControlName="gender">
+      <mat-option [value]="1">Male</mat-option>
+      <mat-option [value]="2">Female</mat-option>
+    </mat-select>
+    <mat-error *ngIf="businessCardForm.get('gender')?.invalid">Gender is required</mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Date of Birth</mat-label>
+    <input matInput type="date" formControlName="dateOfBirth">
+    <mat-error *ngIf="businessCardForm.get('dateOfBirth')?.invalid">Date of Birth is required</mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Email</mat-label>
+    <input matInput formControlName="email" placeholder="Email">
+    <mat-error *ngIf="businessCardForm.get('email')?.invalid">Valid email is required</mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Phone</mat-label>
+    <input matInput formControlName="phone" placeholder="Phone">
+    <mat-error *ngIf="businessCardForm.get('phone')?.invalid">Phone number is required</mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Address</mat-label>
+    <input matInput formControlName="address" placeholder="Address">
+    <mat-error *ngIf="businessCardForm.get('address')?.invalid">Address is required</mat-error>
+  </mat-form-field>
+
+  <div class="dialog-actions">
+    <button mat-button (click)="close()">Cancel</button>
+    <button mat-raised-button color="primary" [disabled]="businessCardForm.invalid" (click)="submit()">Save</button>
+  </div>
+</form>

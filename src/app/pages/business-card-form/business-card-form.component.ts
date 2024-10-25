@@ -15,7 +15,7 @@ import {
 } from '@angular/forms';
 import { CommonModule, formatDate } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { BusinessCardservice } from '../../services/business-card.service';
+import { BusinessCardservice } from '../../services/BusinessCard/business-card.service';
 import { ToastrService } from 'ngx-toastr';
 @Component({
   selector: 'app-bussineesCard-form',
@@ -28,43 +28,47 @@ export class BussineesCardFormComponent implements OnChanges {
   @Input() data: IBusinessCard | null = null;
   @Output() onCloseModel = new EventEmitter();
 
-  bussineesCardForm!: FormGroup;
+  businessCardForm!: FormGroup;
 
   constructor(
     private fb: FormBuilder,
     private BusinessCardservice: BusinessCardservice,
     private toastr: ToastrService
   ) {
-    this.bussineesCardForm = this.fb.group({
+
+    this.businessCardForm = this.fb.group({
       name: new FormControl('', [Validators.required]),
       email: new FormControl('', [Validators.required, Validators.email]),
-      mobile: new FormControl('', [Validators.required]),
-      dob: new FormControl('', [Validators.required]),
-      doj: new FormControl('', [Validators.required]),
+      phone: new FormControl('', [Validators.required]),
+      gender: new FormControl('', [Validators.required]),
+      dateOfBirth: new FormControl('', [Validators.required]),
+      address: new FormControl('', [Validators.required]),
     });
   }
 
   onClose() {
     this.onCloseModel.emit(false);
   }
-
   ngOnChanges(): void {
     if (this.data) {
-      this.bussineesCardForm.patchValue({
+      this.businessCardForm.patchValue({
         name: this.data.name,
         email: this.data.email,
-        mobile: this.data.phone,
-        dob: formatDate(this.data.dob, 'yyyy-MM-dd', 'en'),
+        phone: this.data.phone,
+        gender: this.data.gender,
+        dateOfBirth: formatDate(this.data.dateOfBirth, 'yyyy-MM-ddTHH:mm:ssZ', 'en'),
         address: this.data.address,
       });
     }
   }
 
   onSubmit() {
-    if (this.bussineesCardForm.valid) {
-      if (this.data) {
+    if (this.businessCardForm.valid) {
+
+      debugger;
+      if (this.data?.id) {
         this.BusinessCardservice
-          .updateBusinessCard(this.data.id as string, this.bussineesCardForm.value)
+          .updateBusinessCard(this.data.id as string, this.businessCardForm.value)
           .subscribe({
             next: (response: any) => {
               this.resetBussineesCardForm();
@@ -72,7 +76,8 @@ export class BussineesCardFormComponent implements OnChanges {
             },
           });
       } else {
-        this.BusinessCardservice.createBusinessCard(this.bussineesCardForm.value).subscribe({
+        debugger;
+        this.BusinessCardservice.createBusinessCard(this.businessCardForm.value).subscribe({
           next: (response: any) => {
             this.resetBussineesCardForm();
             this.toastr.success(response.message);
@@ -80,12 +85,12 @@ export class BussineesCardFormComponent implements OnChanges {
         });
       }
     } else {
-      this.bussineesCardForm.markAllAsTouched();
+      this.businessCardForm.markAllAsTouched();
     }
   }
 
   resetBussineesCardForm() {
-    this.bussineesCardForm.reset();
+    this.businessCardForm.reset();
     this.onClose();
   }
 }

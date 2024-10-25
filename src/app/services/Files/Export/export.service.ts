@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
-import { BusinessCardservice } from '../../BusinessCard/business-card.service';
+import { BusinessCardService } from '../../BusinessCard/business-card.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ExportService {
 
-  constructor(private businessCardService: BusinessCardservice) {}
+  constructor(private businessCardService: BusinessCardService) {}
 
   exportAndDownloadBusinessCards(format: string, IDs: (string | undefined)[] | undefined = undefined): void {
     this.businessCardService.exportBusinessCardsFile(format, IDs).subscribe({

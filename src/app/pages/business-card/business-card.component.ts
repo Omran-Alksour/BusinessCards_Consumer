@@ -2,11 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { ModelComponent } from '../shared/ui/model/model.component';
 import { BussineesCardFormComponent } from '../business-card-form/business-card-form.component';
 import { ToastrService } from 'ngx-toastr';
-import { BusinessCardservice } from '../../services/BusinessCard/business-card.service';
+import { BusinessCardService } from '../../services/BusinessCard/business-card.service';
 import { IBusinessCard } from '../shared/models/BusinessCard';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { identifierName } from '@angular/compiler';
 import { ExportService } from '../../services/Files/Export/export.service';
 @Component({
   selector: 'app-bussineesCard',
@@ -27,7 +26,7 @@ console.log("import file ..");
   // isMenuOpen = false;
 
   constructor(
-    private businessCardservice: BusinessCardservice,
+    private businessCardservice: BusinessCardService,
     private exportService: ExportService,
     private toastr: ToastrService
   ) {}
@@ -81,7 +80,7 @@ console.log("import file ..");
   deleteBusinessCard(id: string ="") {
     this.businessCardservice.deleteBusinessCards([id]).subscribe({
       next: (response) => {
-        
+
         if (response.isSuccess) {
         this.toastr.success("Card deleted successfully.");
         this.getAllBusinessCards();

@@ -15,7 +15,7 @@ import {
 } from '@angular/forms';
 import { CommonModule, formatDate } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { BusinessCardservice } from '../../services/BusinessCard/business-card.service';
+import { BusinessCardService } from '../../services/BusinessCard/business-card.service';
 import { ToastrService } from 'ngx-toastr';
 @Component({
   selector: 'app-bussineesCard-form',
@@ -32,7 +32,7 @@ export class BussineesCardFormComponent implements OnChanges {
 
   constructor(
     private fb: FormBuilder,
-    private BusinessCardservice: BusinessCardservice,
+    private BusinessCardservice: BusinessCardService,
     private toastr: ToastrService
   ) {
 
@@ -77,12 +77,20 @@ export class BussineesCardFormComponent implements OnChanges {
           });
       } else {
         debugger;
-        this.BusinessCardservice.createBusinessCard(this.businessCardForm.value).subscribe({
-          next: (response: any) => {
-            this.resetBussineesCardForm();
-            this.toastr.success(response.message);
-          },
-        });
+        const { newBusinessCard, postObservable } = this.BusinessCardservice.createBusinessCard(this.businessCardForm.value);
+
+postObservable.subscribe({
+  next: (response: any) => {
+    this.resetBussineesCardForm();
+    this.toastr.success(response?.message ?? 'Card Added Successfully!');
+  },
+  error: (error: any) => {
+    this.toastr.error('Error while adding business card.');
+  }
+});
+
+
+
       }
     } else {
       this.businessCardForm.markAllAsTouched();

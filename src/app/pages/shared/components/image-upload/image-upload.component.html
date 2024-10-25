@@ -1,0 +1,45 @@
+<div  *ngIf="!isViewMode" class="mb-5 w-full">
+  <label class="block mb-2 font-medium text-gray-700 dark:text-gray-900 text-xs">Upload or paste Base64 Image (optional)</label>
+
+  <!-- Drag-and-Drop Area -->
+  <div
+    class="w-fit mx-auto px-0 md:p-2 md:w-full  h-10 md:h-32   p-4 border-2 border-dotted border-gray-300 rounded-md flex flex-col items-center justify-center cursor-pointer hover:border-blue-500"
+    (dragover)="onDragOver($event)"
+    (dragleave)="onDragLeave($event)"
+    (drop)="onDrop($event)"
+  >
+    <!-- Drag & Drop Text -->
+    <p class="hidden md:block text-gray-500 mb-1">Drag and drop file here</p>
+    <p class="hidden md:block text-gray-500 mb-1">or</p>
+
+    <!-- Browse Button -->
+    <button type="button" class="bg-blue-800 hover:bg-blue-600 text-white py-2 px-4 rounded" (click)="fileInput.click()">Browse for file</button>
+  </div>
+
+  <!-- Hidden File Input -->
+  <input #fileInput type="file" class="hidden" (change)="onFileSelected($event)" accept="image/*">
+
+  <!-- Error Message -->
+  <div *ngIf="fileError" class="text-red-500 text-sm mt-2">{{ fileError }}</div>
+
+  <div class="flex justify-between items-center mt-1">
+    <!-- Base64 Input (Optional) -->
+    <div class="h-16 w-1/2">
+      <label for="base64Input" class="block mb-2 text-xs">Base64:</label>
+      <textarea id="base64Input" rows="2" placeholder="example:data:image/png;base64,iV..." class="hidden-scrollbar focus:text-blue-700 w-full p-3 border border-gray-300 rounded-md outline-1 outline-blue-800" [value]="base64Value" readonly>
+      </textarea>
+    </div>
+
+    <!-- Icon to indicate transformation -->
+    <mat-icon class="w-2/12 mt-5 text-blue-800 stroke-blue-800">compare_arrows</mat-icon>
+
+    <!-- Image Preview -->
+    <div class="w-4/12 h-16">
+      <p class="text-xs">Preview:</p>
+      <img [src]="previewUrl" alt="Image preview" class="h-full object-cover">
+    </div>
+  </div>
+</div>
+<div *ngIf="isViewMode" class="w-10/12  flex justify-center align-middle ">
+  <img   [src]="previewUrl" alt="Image preview"  class="object-cover w-full  mx-auto my-auto">
+</div>

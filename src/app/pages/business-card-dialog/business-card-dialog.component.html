@@ -1,47 +1,80 @@
-<h2 mat-dialog-title>Add New Business Card</h2>
+<div class="custom-dialog p-6 rounded-lg shadow-lg w-full mx-auto">
+  <h2 class="mb-5 font-bold tracking-tight text-gray-900 dark:text-gray-900">Business Card Details</h2>
 
-<form [formGroup]="businessCardForm">
-  <mat-form-field appearance="outline">
-    <mat-label>Name</mat-label>
-    <input matInput formControlName="name" placeholder="Name">
-    <mat-error *ngIf="businessCardForm.get('name')?.invalid">Name is required</mat-error>
-  </mat-form-field>
+  <form [formGroup]="businessCardDialogForm" class="w-full grid grid-cols-1 md:grid-cols-2 gap-5" (ngSubmit)="onSubmit()" novalidate>
+    <!-- Photo Upload Section (Square) -->
+    <div [ngClass]="{ 'border-2 border-blue-800': !isViewMode }" class="  p-2 rounded-md w-full flex flex-col justify-start">
+      <app-image-upload  (photo)="onPhotoBase64Change($event)" [base64Value]="businessCardDialogForm.get('photo')?.value"></app-image-upload>
+    </div>
 
-  <mat-form-field appearance="outline">
-    <mat-label>Gender</mat-label>
-    <mat-select formControlName="gender">
-      <mat-option [value]="1">Male</mat-option>
-      <mat-option [value]="2">Female</mat-option>
-    </mat-select>
-    <mat-error *ngIf="businessCardForm.get('gender')?.invalid">Gender is required</mat-error>
-  </mat-form-field>
+    <!-- Name , Email, Phone and Address -->
+    <div class=" w-full grid grid-cols-2 md:grid-cols-2 gap-3">
+      <!-- Name -->
+      <div class="mb-5">
+        <label for="name" class="block mb-2 font-medium text-gray-700 dark:text-gray-900">Name</label>
+        <input   type="text" id="name" class="form-control w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-800 dark:bg-Violet-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Enter Name" formControlName="name">
+        <div *ngIf="businessCardDialogForm.get('name')?.hasError('required') && businessCardDialogForm.get('name')?.touched" class="text-red-500 text-sm mt-2">
+          Name is required
+        </div>
+      </div>
 
-  <mat-form-field appearance="outline">
-    <mat-label>Date of Birth</mat-label>
-    <input matInput type="date" formControlName="dateOfBirth">
-    <mat-error *ngIf="businessCardForm.get('dateOfBirth')?.invalid">Date of Birth is required</mat-error>
-  </mat-form-field>
+      <!-- Email -->
+      <div class="mb-5">
+        <label for="email" class="block mb-2 font-medium text-gray-700 dark:text-gray-900">Email Address</label>
+        <input   type="email" id="email" class="form-control w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-800 dark:bg-Violet-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Enter Email Address" formControlName="email">
+        <div *ngIf="businessCardDialogForm.get('email')?.hasError('required') && businessCardDialogForm.get('email')?.touched" class="text-red-500 text-sm mt-2">
+          Email is required
+        </div>
+      </div>
+          <!-- Phone -->
+          <div class="mb-5">
+            <label for="phone" class="block mb-2 font-medium text-gray-700 dark:text-gray-900">Phone</label>
+            <input    type="text" id="phone" class="form-control w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-800 dark:bg-Violet-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Enter Phone Number" formControlName="phone">
+            <div *ngIf="businessCardDialogForm.get('phone')?.hasError('required') && businessCardDialogForm.get('phone')?.touched" class="text-red-500 text-sm mt-2">
+              Phone is required
+            </div>
+          </div>
 
-  <mat-form-field appearance="outline">
-    <mat-label>Email</mat-label>
-    <input matInput formControlName="email" placeholder="Email">
-    <mat-error *ngIf="businessCardForm.get('email')?.invalid">Valid email is required</mat-error>
-  </mat-form-field>
+          <!-- Address -->
+          <div class="mb-5">
+            <label for="address" class="block mb-2 font-medium text-gray-700 dark:text-gray-900">Address</label>
+            <input   type="text" id="address" class="form-control w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-800 dark:bg-Violet-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Enter Address" formControlName="address">
+            <div *ngIf="businessCardDialogForm.get('address')?.hasError('required') && businessCardDialogForm.get('address')?.touched" class="text-red-500 text-sm mt-2">
+              Address is required
+            </div>
+          </div>
+         <!-- Gender -->
+      <div>
+        <label for="gender" class="block mb-2 font-medium text-gray-700 dark:text-gray-900">Gender</label>
+        <select  id="gender" class="form-control w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-800 dark:bg-Violet-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" formControlName="gender">
+          <option value="" disabled>Select Gender</option>
+          <option value="1">Male</option>
+          <option value="2">Female</option>
+        </select>
+        <div *ngIf="businessCardDialogForm.get('gender')?.hasError('required') && businessCardDialogForm.get('gender')?.touched" class="text-red-500 text-sm mt-2">
+          Gender is required
+        </div>
+      </div>
 
-  <mat-form-field appearance="outline">
-    <mat-label>Phone</mat-label>
-    <input matInput formControlName="phone" placeholder="Phone">
-    <mat-error *ngIf="businessCardForm.get('phone')?.invalid">Phone number is required</mat-error>
-  </mat-form-field>
+      <!-- Date of Birth -->
+      <div>
+        <label for="dateOfBirth" class="block mb-2 font-medium text-gray-700 dark:text-gray-900">Date of Birth</label>
+        <input type="date" id="dateOfBirth" class="form-control w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-800 dark:bg-Violet-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" formControlName="dateOfBirth">
+        <div *ngIf="businessCardDialogForm.get('dateOfBirth')?.hasError('required') && businessCardDialogForm.get('dateOfBirth')?.touched" class="text-red-500 text-sm mt-2">
+          Date of Birth is required
+        </div>
+      </div>
+    </div>
 
-  <mat-form-field appearance="outline">
-    <mat-label>Address</mat-label>
-    <input matInput formControlName="address" placeholder="Address">
-    <mat-error *ngIf="businessCardForm.get('address')?.invalid">Address is required</mat-error>
-  </mat-form-field>
 
-  <div class="dialog-actions">
-    <button mat-button (click)="close()">Cancel</button>
-    <button mat-raised-button color="primary" [disabled]="businessCardForm.invalid" (click)="submit()">Save</button>
-  </div>
-</form>
+    <!-- Action Buttons -->
+    <div class=" md:col-span-2 gap-10   w-full flex justify-evenly  h-10 mt-auto mx-auto justify-self-center	">
+      <button type="button" (click)="onClose()" class="w-1/2 md:w-1/4 text-white bg-gray-400 hover:bg-red-500 font-medium rounded-lg px-5 py-2.5 text-center">
+        Cancel
+      </button>
+      <button   *ngIf="!isViewMode" type="submit" class="w-1/2 md:w-1/4 text-white bg-blue-800 hover:bg-blue-900 font-medium rounded-lg px-5 py-2.5 text-center" [disabled]="businessCardDialogForm.invalid">
+        Submit
+      </button>
+    </div>
+  </form>
+</div>

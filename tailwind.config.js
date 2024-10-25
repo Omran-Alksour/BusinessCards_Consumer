@@ -11,7 +11,11 @@ module.exports = {
         "2xl": "6rem",
       },
     },
-    extend: {},
+    extend: {
+      colors: {
+        customBlue: '#003366',
+      },
+    },
   },
   plugins: [],
 };

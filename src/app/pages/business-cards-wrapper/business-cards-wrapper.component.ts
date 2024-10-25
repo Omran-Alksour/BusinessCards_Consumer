@@ -13,57 +13,25 @@ import { CommonModule } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { BusinessCardDialogComponent } from '../business-card-dialog/business-card-dialog.component';
 import { ToastrService } from 'ngx-toastr';
-import { BusinessCardservice } from '../../services/BusinessCard/business-card.service';
+import { BusinessCardService } from '../../services/BusinessCard/business-card.service';
 import { ExportService } from '../../services/Files/Export/export.service';
-import { CustomConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
-
+import { CustomConfirmationDialogComponent } from '../shared/ui/confirmation-dialog/confirmation-dialog.component';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 
 @Component({
   selector: 'app-business-cards-wrapper',
   templateUrl: './business-cards-wrapper.component.html',
   styleUrls: ['./business-cards-wrapper.component.scss'],
   standalone: true,
-  imports: [
-    CommonModule,
-    MatTableModule,
-    MatPaginatorModule,
-    MatSortModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatCheckboxModule,
-    MatButtonModule,
-    MatIconModule,
-    MatDialogModule,
+  imports: [ CommonModule,MatTableModule,MatPaginatorModule, MatSortModule, MatFormFieldModule,
+    MatInputModule,MatCheckboxModule,MatButtonModule,MatIconModule,MatDialogModule,
   ]
 })
-export class BusinessCardsWrapperComponent /*implements AfterViewInit */ {
-
-deleteSelectedBusinessCardsDialog() {
-  this.deleteRowsDialog(this.selectedRows);
-}
-
-deleteRowsDialog(rows: IBusinessCard[]): void {
-  const dialogRef = this.dialog.open(CustomConfirmationDialogComponent, {
-    data: {
-      title: 'Delete Business Cards',
-      message: 'Are you sure you want to delete the selected business cards?',
-      confirmText: 'Delete',
-      cancelText: 'Cancel'
-    }
-  });
-
-  dialogRef.afterClosed().subscribe(result => {
-    if(result){
-      this.deleteRows(rows);
-    }
-  });
-
-}
+export class BusinessCardsWrapperComponent {
 
 
 
-
-  displayedColumns: string[] = ['select', 'id','name',/* 'gender','dateOfBirth',*/  'email', 'phone',/*'address',*/ 'photo','lastUpdateAt', 'actions'];
+  displayedColumns: string[] = ['select', 'id','name',  'email', 'phone', 'photo','lastUpdateAt', 'actions'];
   dataSource = new MatTableDataSource<IBusinessCard>([]);
   selectedRows: IBusinessCard[] = [];
   fullPage: IBusinessCard[] = [];
@@ -73,7 +41,7 @@ deleteRowsDialog(rows: IBusinessCard[]): void {
   pageSize: number = 10;
   currentPage: number = 1;
 
-  orderBy: string = "LastUpdateAt";
+  orderBy: string = "lastUpdateAt";
   orderDirection:string ="desc";
 
   search:string | null=null;
@@ -83,24 +51,59 @@ deleteRowsDialog(rows: IBusinessCard[]): void {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
+  smallScreenColumns: string[] = ['select', 'name', 'actions'];
+  mediumScreenColumns: string[] = ['select', 'name', 'email', 'phone', 'actions'];
+  largeScreenColumns: string[] = ['select', 'id', 'name', 'email', 'phone', 'photo', 'lastUpdateAt', 'actions'];
 
-  constructor(private dialog: MatDialog, private businessCardservice: BusinessCardservice,
-        private exportService: ExportService,
-    private toastr: ToastrService) {
-  }
+  constructor(private dialog: MatDialog, private businessCardservice: BusinessCardService,
+        private exportService: ExportService, private breakpointObserver: BreakpointObserver,
+        private toastr: ToastrService) {}
 
 
   ngOnInit(): void {
+    this.adjustColumns(window.innerWidth);
     this.getBusinessCards();
   }
+  ViewCard(currentBusinessCard: IBusinessCard): void {
+    this.businessCardservice.isViewMode=true;
+    this.businessCardservice.currentBusinessCard=currentBusinessCard;
+    this.openBusinessCardDialog();
+    }
+
+    addNewBusinessCard() {
+      this.businessCardservice.isViewMode=false;
+      this.businessCardservice.currentBusinessCard=null;
+      this.openBusinessCardDialog();
+    }
+
+  deleteSelectedBusinessCardsDialog() {
+    this.deleteRowsDialog(this.selectedRows);
+  }
+
+  deleteRowsDialog(rows: IBusinessCard[]): void {
+    const dialogRef = this.dialog.open(CustomConfirmationDialogComponent, {
+      data: {
+        title: 'Delete Business Cards',
+        message: 'Are you sure you want to delete the selected business cards?',
+        confirmText: 'Delete',
+        cancelText: 'Cancel'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if(result){
+        this.deleteRows(rows);
+      }
+    });
+  }
+
   onSort(sort: Sort) {
     this.orderDirection=sort.direction ? sort.direction : 'asc';
     this.orderBy=sort.active;
-console.log(`Active Sort: ${sort.active}`);
     this.getBusinessCards(this.currentPage, this.pageSize, this.orderBy, this.orderDirection, this.search);
   }
 
-  getBusinessCards(pageNumber:number=1,pageSize:number=10,orderBy:string="LastUpdateAt",orderDirection:string="desc", search:string | null=null) {
+  getBusinessCards(pageNumber:number=1,pageSize:number=10,orderBy:string="lastUpdateAt",orderDirection:string="desc", search:string | null=null) {
 
     debugger;
     this.businessCardservice.getBusinessCards(pageNumber,pageSize,orderBy,orderDirection,search).subscribe({
@@ -135,7 +138,6 @@ console.log(`Active Sort: ${sort.active}`);
             clearTimeout(this.typingTimeout);
           }
 
-          //Call after 300ms
           this.typingTimeout = setTimeout(() => {
             this.getBusinessCards(this.currentPage, this.pageSize, this.orderBy, this.orderDirection, this.search);
           }, 300);
@@ -170,9 +172,11 @@ console.log(`Active Sort: ${sort.active}`);
 
   deleteRows(rows: IBusinessCard[]): void {
     const IDs = rows.map(row => row.id);
+    const forceDelete:boolean =IDs.length>1;/*Enable ForceDelete for multiple selections*/
+
     this.dataSource.data = this.dataSource.data.filter(data => !IDs.includes(data.id));
 
-    this.businessCardservice.deleteBusinessCards(IDs).subscribe({
+    this.businessCardservice.deleteBusinessCards(IDs,forceDelete).subscribe({
       next: (response) => {
         let deletedIDs:(string|undefined)[] =response.value??[];
 
@@ -190,28 +194,45 @@ console.log(`Active Sort: ${sort.active}`);
 
 
 
-
   exportSelectedBusinessCards(format: string): void {
     debugger;
     const IDs = this.selectedRows.map(row => row.id);
     this.exportService.exportAndDownloadBusinessCards(format, IDs);
   }
 
-
-  /////////////////
-  openAddBusinessCardDialog() {
-    const dialogRef = this.dialog.open(BusinessCardDialogComponent, {
-      width: '400px'
-    });
-
-    // After closes, update the table
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        // Add the new to the list
-        this.dataSource.data = [...this.dataSource.data, result];
-      }
-    });
+ // Adjust columns based on the screen width
+ adjustColumns(width: number) {
+  if (width <= 600) {
+    this.displayedColumns = this.smallScreenColumns;
+  } else if (width <= 1024) {
+    this.displayedColumns = this.mediumScreenColumns;
+  } else {
+    this.displayedColumns = this.largeScreenColumns;
   }
+}
 
+
+
+openBusinessCardDialog() {
+  this.breakpointObserver.observe([Breakpoints.Handset])
+    .subscribe(result => {
+      debugger;
+      const isMobile = result.matches;
+      const dialogRef = this.dialog.open(BusinessCardDialogComponent, {
+        width: isMobile ? '80%' : '60%' // Adjust dialog width based on device type
+      });
+
+      if(!this.businessCardservice.isViewMode){
+            dialogRef.afterClosed().subscribe(result => {
+              if (result) {
+                console.log("result in Wrapper" ,JSON.stringify(result,null,2));
+                this.dataSource.data = [result,...this.dataSource.data];
+              }
+            });
+      }
+
+
+    });
+}
 }
 

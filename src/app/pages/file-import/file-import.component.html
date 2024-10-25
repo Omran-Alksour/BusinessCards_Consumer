@@ -1,4 +1,4 @@
-<div  class="overflow-x-auto mb-6 text-white dark:bg-purple-800s  dark:bg-white dark: dark:text-purple-900">
+<div  class="overflow-x-auto mb-6 text-white dark:bg-blue-800s  dark:bg-white dark: dark:text-blue-900">
   <div class="flex justify-between">
   <h4 class="font-bold text-2xl">  Import File</h4>
   <button type="button" routerLink=""
@@ -21,7 +21,7 @@
 
   <!-- File Actions -->
   <div *ngIf="selectedFile" class="file-actions mb-3">
-    <p>Selected file: <strong>{{ selectedFile?.name }}</strong></p>
+    <p>Selected file: <strong>{{ selectedFile.name }}</strong></p>
     <button class="btn btn-primary me-2" (click)="onUpload()">Upload File</button>
     <button class="btn btn-secondary" (click)="resetFile()">Reset</button>
   </div>
@@ -34,12 +34,12 @@
   </div>
 
   <!-- Business Cards Table -->
-  <div class="overflow-x-auto flex justify-between items-center mb-6 text-white dark:bg-purple-800 dark:bg-white dark:text-purple-900">
+  <div class="overflow-x-auto flex justify-between items-center mb-6 text-white dark:bg-blue-800  dark:text-blue-900">
     <h4 class="font-bold text-2xl">Business Cards</h4>
   </div>
 
   <div class="relative overflow-x-auto shadow-md sm:rounded-lg h-[80vh]" *ngIf="fileContent && fileContent.length > 0">
-    <table class="w-full text-sm text-left rtl:text-right text-purple-500 dark:text-gray-400">
+    <table class="w-full text-sm text-left rtl:text-right text-blue-500 dark:text-gray-400">
       <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
         <tr>
           <th scope="col" class="px-6 py-3">Name</th>
@@ -53,8 +53,8 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let item of fileContent" class="bg-white border-b dark:bg-purple-800 dark:border-gray-700">
-          <th scope="row" class="px-6 py-4 font-medium text-purple-900 whitespace-nowrap dark:text-white">
+        <tr *ngFor="let item of fileContent" class="bg-white border-b dark:bg-blue-800 dark:border-gray-700">
+          <th scope="row" class="px-6 py-4 font-medium text-blue-900 whitespace-nowrap dark:text-white">
             {{item.name}}
           </th>
           <td class="px-6 py-4">{{item.gender === 1 ? 'Male' : 'Female'}}</td>

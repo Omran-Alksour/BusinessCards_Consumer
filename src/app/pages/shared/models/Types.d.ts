@@ -1,4 +1,4 @@
-export interface IBusinessCard {
+interface IBusinessCard {
   id?: string;
   name: string;
   gender: number;
@@ -10,7 +10,7 @@ export interface IBusinessCard {
   lastUpdateAt?: string;
 }
 
-export interface PagedResponse<T> {
+interface PagedResponse<T> {
   pageNumber: number;
   pageSize: number;
   totalRecords: number;
@@ -18,7 +18,7 @@ export interface PagedResponse<T> {
   data: T[];
 }
 
-export interface ApiResponse<T> {
+interface ApiResponse<T> {
   value: T;
   isSuccess: boolean;
   isFailure: boolean;
@@ -26,5 +26,10 @@ export interface ApiResponse<T> {
     code: string;
     message: string;
   };
+}
+
+interface ImportResponse {
+  success: string[];
+  failed: string[];
 }
 

@@ -11,10 +11,10 @@ export class ExportService {
   exportAndDownloadBusinessCards(format: string, IDs: (string | undefined)[] | undefined = undefined): void {
     this.businessCardService.exportBusinessCardsFile(format, IDs).subscribe({
       next: (blob: Blob) => {
-        this.downloadBusinessCards(blob, format); // Download the received file (Blob)
+        this.downloadBusinessCards(blob, format);
       },
       error: (err:any) => {
-        console.log('Error exporting business cards:', err); // Handle any errors
+        console.log('Error exporting business cards:', err);
       }
     });
   }
@@ -32,7 +32,7 @@ export class ExportService {
       .replace(/:/g, '-')
       .replace('T', '-');
 
-    a.download = `Omran-Alksour_business-cards_${formattedDate}.${format}`;
+    a.download = `Omran-Alksour_Business-Cards_${formattedDate}.${format}`;
 
     // Append & download
     document.body.appendChild(a);

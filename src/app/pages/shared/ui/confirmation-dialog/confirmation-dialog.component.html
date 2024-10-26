@@ -1,6 +1,6 @@
 <h2 mat-dialog-title>{{ data.title || 'Confirm Action' }}</h2>
 <mat-dialog-content class="my-0">{{ data.message || 'Are you sure you want to perform this action?' }}</mat-dialog-content>
 <mat-dialog-actions class="flex justify-evenly">
-  <button mat-button (click)="onCancel()">{{ data.cancelText || 'Cancel' }}</button>
-  <button mat-button class=" hover:bg-red-500 hover:text-white" (click)="onConfirm()">{{ data.confirmText || 'Delete' }}</button>
+  <button mat-button class="custom-flat-btn border-0 " (click)="onCancel()">{{ data.cancelText || 'Cancel' }}</button>
+  <button mat-button class="flat-btn-red fwhite-text" (click)="onConfirm()">{{ data.confirmText || 'Delete' }}</button>
 </mat-dialog-actions>

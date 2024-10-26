@@ -1,4 +1,3 @@
-import { IBusinessCard } from '../shared/models/BusinessCard';
 import { Component, ViewChild, AfterViewInit } from '@angular/core';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
@@ -17,6 +16,7 @@ import { BusinessCardService } from '../../services/BusinessCard/business-card.s
 import { ExportService } from '../../services/Files/Export/export.service';
 import { CustomConfirmationDialogComponent } from '../shared/ui/confirmation-dialog/confirmation-dialog.component';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-business-cards-wrapper',
@@ -24,7 +24,7 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
   styleUrls: ['./business-cards-wrapper.component.scss'],
   standalone: true,
   imports: [ CommonModule,MatTableModule,MatPaginatorModule, MatSortModule, MatFormFieldModule,
-    MatInputModule,MatCheckboxModule,MatButtonModule,MatIconModule,MatDialogModule,
+    MatInputModule,MatCheckboxModule,MatButtonModule,MatIconModule,MatDialogModule,RouterLink
   ]
 })
 export class BusinessCardsWrapperComponent {
@@ -48,16 +48,19 @@ export class BusinessCardsWrapperComponent {
   typingTimeout: any = null;
 
 
+
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
   smallScreenColumns: string[] = ['select', 'name', 'actions'];
   mediumScreenColumns: string[] = ['select', 'name', 'email', 'phone', 'actions'];
-  largeScreenColumns: string[] = ['select', 'id', 'name', 'email', 'phone', 'photo', 'lastUpdateAt', 'actions'];
+  largeScreenColumns: string[] = ['select', 'id', 'name', 'email',/* 'phone',*/ 'photo', 'lastUpdateAt', 'actions'];
+  listingPageSizeOptions:number[] = [8, 20, 30, 40,50]
 
   constructor(private dialog: MatDialog, private businessCardservice: BusinessCardService,
         private exportService: ExportService, private breakpointObserver: BreakpointObserver,
         private toastr: ToastrService) {}
+
 
 
   ngOnInit(): void {
@@ -140,7 +143,7 @@ export class BusinessCardsWrapperComponent {
 
           this.typingTimeout = setTimeout(() => {
             this.getBusinessCards(this.currentPage, this.pageSize, this.orderBy, this.orderDirection, this.search);
-          }, 300);
+          }, 1400);
     }
 
 
@@ -204,6 +207,7 @@ export class BusinessCardsWrapperComponent {
  adjustColumns(width: number) {
   if (width <= 600) {
     this.displayedColumns = this.smallScreenColumns;
+    this.listingPageSizeOptions=[6,14,25,35,50];
   } else if (width <= 1024) {
     this.displayedColumns = this.mediumScreenColumns;
   } else {
@@ -219,7 +223,7 @@ openBusinessCardDialog() {
       debugger;
       const isMobile = result.matches;
       const dialogRef = this.dialog.open(BusinessCardDialogComponent, {
-        width: isMobile ? '80%' : '60%' // Adjust dialog width based on device type
+        width: isMobile ? '80%' : '60%'
       });
 
       if(!this.businessCardservice.isViewMode){

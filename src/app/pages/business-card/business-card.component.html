@@ -41,7 +41,7 @@
         <td class="px-6 py-4">{{item.phone}}</td>
         <td class="px-6 py-4">{{item.address}}</td>
         <td class="px-6 py-4 flex  justify-center">
-          <img [src]="item.photo" alt="Photo" class="max-h-[50px] object-contain  justify-center" *ngIf="item.photo" />
+          <img [src]="item.photo" alt="Photo" class="max-h-[50px] object-contain  justify-center" *ngIf="item.photo"  (error)="this.item.photo='assets/images/default_image.png'"/>
         </td>
         <td class="px-6 py-4">{{ item.lastUpdateAt | date: 'MMM d, yyyy \'at\' h:mm a' }}    </td>
         <td class="px-6 py-4 text-right">

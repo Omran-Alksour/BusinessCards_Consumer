@@ -7,6 +7,35 @@ body {
   font-family: "Roboto", sans-serif;
   font-size: 1rem;
   @apply bg-slate-50;
+
+  .flat-btn-blue {
+    @apply font-semibold w-fit mt-auto text-sm sm:text-base h-10 mx-2 rounded-md px-4 flex items-center justify-evenly
+      bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 text-white
+      shadow-lg transform transition-transform hover:-translate-y-1 duration-300 ease-in-out focus:outline-none focus:ring-2
+      focus:ring-blue-500 focus:ring-opacity-50;
+  }
+
+  .flat-btn-red {
+    @apply font-semibold w-fit mt-auto text-sm sm:text-base h-10 mx-2 rounded-md px-4 flex items-center justify-evenly
+      bg-gradient-to-r from-red-600 to-red-800 hover:from-red-700 hover:to-red-900 text-white
+      shadow-lg transform transition-transform hover:-translate-y-1 duration-300 ease-in-out focus:outline-none focus:ring-2
+      focus:ring-red-500 focus:ring-opacity-50;
+  }
+
+  .custom-flat-btn {
+    @apply font-semibold w-fit mt-auto text-sm sm:text-base h-10 mx-2 rounded-md px-4 flex items-center justify-center
+      bg-gradient-to-r hover:bg-gradient-to-r text-white
+      shadow-lg transform transition-transform hover:-translate-y-1 duration-300 ease-in-out
+      focus:outline-none focus:ring-2 focus:ring-opacity-50;
+  }
+
+  .fwhite-text{
+   color: white !important;
+   &:hover ,:focus{
+    color: white !important;
+   }
+  }
+
 }
 
 @layer components {
@@ -17,6 +46,7 @@ body {
   .form-error {
     @apply text-red-600 text-sm mt-1;
   }
+
 }
 
 html, body { height: 100%; }

@@ -1,17 +1,15 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import {
-  ApiResponse,
-  IBusinessCard,
-  PagedResponse,
-} from '../../pages/shared/models/BusinessCard';
+import { environment } from '../../../environments/environment';
+
 
 @Injectable({
   providedIn: 'root',
 })
 export class BusinessCardService {
-  BASE_URL = 'https://localhost:7017/api/BusinessCard';
+  BASE_URL = environment.BASE_URL;
+
   isViewMode: boolean = false;
   currentBusinessCard:IBusinessCard|null = null;
 

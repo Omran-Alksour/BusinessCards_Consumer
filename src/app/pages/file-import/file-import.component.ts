@@ -1,27 +1,44 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import * as Papa from 'papaparse';
-import { IBusinessCard } from '../shared/models/BusinessCard';
 import { CommonModule } from '@angular/common';
 import { ModelComponent } from '../shared/ui/model/model.component';
 import { RouterLink } from '@angular/router';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatIconModule } from '@angular/material/icon';
+import { ToastrService } from 'ngx-toastr';
+import { ImportService } from '../../services/Files/Import/import.service';
 
 @Component({
   selector: 'app-file-import',
   standalone: true,
-  imports: [CommonModule, ModelComponent,RouterLink],
+  imports: [CommonModule, ModelComponent, RouterLink, MatProgressSpinnerModule, MatIconModule],
   templateUrl: './file-import.component.html',
   styleUrls: ['./file-import.component.scss']
 })
-export class FileImportComponent implements OnInit, OnDestroy {
+export class FileImportComponent implements OnInit {
   fileContent: IBusinessCard[] | null = null;
   selectedFile: File | null = null;
   isLoading: boolean = false;
-  private removeTimeout: any;
 
-  // Store key for local storage
-  private readonly localStorageKey = 'businessCards';
+  private readonly sessionStorageKey = 'businessCards';
+  private readonly fileStorageKey = 'selectedFile';
 
-  // Handle file selection
+  constructor(private importService: ImportService,private toastr: ToastrService) {}
+
+  onDragOver(event: DragEvent): void {
+    event.preventDefault();
+  }
+
+  onDragLeave(event: DragEvent): void {}
+
+  onFileDrop(event: DragEvent): void {
+    event.preventDefault();
+    const files = event.dataTransfer?.files;
+    if (files?.length) {
+      this.onFileSelect({ target: { files: files } });
+    }
+  }
+
   onFileSelect(event: any): void {
     const file = event.target.files[0];
     if (file) {
@@ -36,9 +53,11 @@ export class FileImportComponent implements OnInit, OnDestroy {
       } else if (fileExtension === 'xml') {
         this.parseXmlFile(file);
       } else {
-        console.error('Unsupported file format.');
+        this.toastr.error('Unsupported file format. Please select a CSV or XML file.');
         this.isLoading = false;
       }
+
+      this.saveFileToSessionStorage(file);
     }
   }
 
@@ -57,9 +76,10 @@ export class FileImportComponent implements OnInit, OnDestroy {
         complete: (result) => {
           this.fileContent = this.parseCsvToBusinessCards(result.data);
           this.isLoading = false;
-          this.saveToSessionStorage();  // Save parsed data to localStorage
+          this.saveToSessionStorage();
         },
         error: (err: any) => {
+          this.toastr.error('Error parsing CSV file.');
           console.error('Error parsing CSV:', err);
           this.isLoading = false;
         }
@@ -73,15 +93,17 @@ export class FileImportComponent implements OnInit, OnDestroy {
     reader.onload = (e) => {
       try {
         const xmlData = reader.result as string;
-        this.fileContent = this.parseXmlToBusinessCards(xmlData);  // Parse XML
+        this.fileContent = this.parseXmlToBusinessCards(xmlData);
         this.isLoading = false;
-        this.saveToSessionStorage();  // Save parsed data to localStorage
+        this.saveToSessionStorage();
       } catch (error) {
+        this.toastr.error('Error parsing XML file.');
         console.error('Error parsing XML:', error);
         this.isLoading = false;
       }
     };
     reader.onerror = () => {
+      this.toastr.error('Error reading file.');
       console.error('Error reading file');
       this.isLoading = false;
     };
@@ -90,24 +112,42 @@ export class FileImportComponent implements OnInit, OnDestroy {
 
   parseCsvToBusinessCards(data: any[]): IBusinessCard[] {
     return data.map((row: any) => {
+      const normalizedRow = this.normalizeRowKeysToPascalCase(row);
+
       return {
-        name: row['Name'],
-        gender: parseInt(row['Gender'], 10),
-        email: row['Email'],
-        phone: row['PhoneNumber'],
-        dateOfBirth: row['DateOfBirth'],
-        address: row['Address'],
-        photo: row['Photo'],
+        name: normalizedRow['Name'] || '',
+        gender: parseInt(normalizedRow['Gender'], 10) || 0,
+        email: normalizedRow['Email'] || '',
+        phone: normalizedRow['PhoneNumber'] || '',//|| normalizedRow['Phone']
+        dateOfBirth: normalizedRow['DateOfBirth'] || '',
+        address: normalizedRow['Address'] || '',
+        photo: normalizedRow['Photo'] || 'assets/images/default_image.png',
         lastUpdateAt: new Date().toISOString()
       } as IBusinessCard;
     });
+  }
+
+  normalizeRowKeysToPascalCase(row: any): any {
+    const normalizedRow: any = {};
+    for (const key in row) {
+      if (row.hasOwnProperty(key)) {
+        const pascalKey = this.toPascalCase(key);
+        normalizedRow[pascalKey] = row[key];
+      }
+    }
+    return normalizedRow;
+  }
+
+  toPascalCase(str: string): string {
+    return str
+      .replace(/(?:^|_)(\w)/g, (_, c) => (c ? c.toUpperCase() : ''))
+      .replace(/(?:^|\.)(\w)/g, (_, c) => (c ? c.toUpperCase() : ''));
   }
 
   parseXmlToBusinessCards(xmlData: string): IBusinessCard[] {
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(xmlData, 'application/xml');
 
-    // Check if the XML was parsed correctly
     const parserError = xmlDoc.getElementsByTagName('parsererror');
     if (parserError.length > 0) {
       throw new Error('Error parsing XML: ' + parserError[0].textContent);
@@ -118,14 +158,18 @@ export class FileImportComponent implements OnInit, OnDestroy {
 
     for (let i = 0; i < cardNodes.length; i++) {
       const card = cardNodes[i];
+      debugger;
+      let photo =card.getElementsByTagName('Photo')[0]?.textContent;
+      let photo2 =card.getElementsByTagName('Photo')[0]?.textContent;
+
       businessCards.push({
         name: card.getElementsByTagName('Name')[0]?.textContent || '',
         gender: parseInt(card.getElementsByTagName('Gender')[0]?.textContent || '0', 10),
         email: card.getElementsByTagName('Email')[0]?.textContent || '',
-        phone: card.getElementsByTagName('Phone')[0]?.textContent || '',
+        phone: card.getElementsByTagName('PhoneNumber')[0]?.textContent || '',
         dateOfBirth: card.getElementsByTagName('DateOfBirth')[0]?.textContent || '',
         address: card.getElementsByTagName('Address')[0]?.textContent || '',
-        photo: card.getElementsByTagName('Photo')[0]?.textContent || undefined,
+        photo: card.getElementsByTagName('Photo')[0]?.textContent || 'assets/images/default_image.png',
         lastUpdateAt: new Date().toISOString()
       });
     }
@@ -133,102 +177,83 @@ export class FileImportComponent implements OnInit, OnDestroy {
     return businessCards;
   }
 
-  // Function to handle file upload
   onUpload(): void {
     if (this.selectedFile) {
-      console.log('Uploading file:', this.selectedFile.name);
-      console.log('Parsed Content:', this.fileContent);
-
-      // Simulate an upload
-      setTimeout(() => {
-        console.log('File uploaded successfully!');
-        this.clearSessionStorage();  // Clear localStorage after upload
-      }, 1000);
+      this.importService.importBusinessCards(this.selectedFile).subscribe({
+        next: (response) => {
+          if (response.isSuccess) {
+            this.toastr.success(`Successfully imported ${response.value.success.length} business cards.`);
+            if (response.value.failed.length > 0) {
+              this.toastr.warning(`${response.value.failed.length} business cards failed to import.`);
+            }
+          } else {
+            this.toastr.error(response.error.message || 'Failed to import business cards.');
+          }
+        },
+        error: (err) => {
+          this.toastr.error('Error while uploading the file.');
+          console.error('Upload error:', err);
+        }
+      });
+    } else {
+      this.toastr.error('Please select a file to upload.');
     }
   }
 
-// Save file content to sessionStorage
-saveToSessionStorage(): void {
-  if (this.fileContent) {
-    sessionStorage.setItem(this.localStorageKey, JSON.stringify(this.fileContent));
-    console.log('Data saved to sessionStorage');
+  saveToSessionStorage(): void {
+    if (this.fileContent) {
+      sessionStorage.setItem(this.sessionStorageKey, JSON.stringify(this.fileContent));
+      console.log('Data saved to session storage');
+    }
   }
-}
 
+  saveFileToSessionStorage(file: File): void {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const fileData = {
+        name: file.name,
+        type: file.type,
+        content: reader.result as string // base64-encoded file content
+      };
+      sessionStorage.setItem(this.fileStorageKey, JSON.stringify(fileData));
+    };
+    reader.readAsDataURL(file);
+  }
 
-
-  // Load the list from localStorage when the component initializes
   ngOnInit(): void {
-    const storedData = localStorage.getItem(this.localStorageKey);
+    const storedData = sessionStorage.getItem(this.sessionStorageKey);
+    const storedFile = sessionStorage.getItem(this.fileStorageKey);
+
     if (storedData) {
       this.fileContent = JSON.parse(storedData);
-      console.log('Loaded data from localStorage');
+      console.log('Loaded data from session storage');
+    }
+
+    if (storedFile) {
+      const fileData = JSON.parse(storedFile);
+      const byteString = atob(fileData.content.split(',')[1]);
+      const arrayBuffer = new ArrayBuffer(byteString.length);
+      const intArray = new Uint8Array(arrayBuffer);
+      for (let i = 0; i < byteString.length; i++) {
+        intArray[i] = byteString.charCodeAt(i);
+      }
+      const blob = new Blob([arrayBuffer], { type: fileData.type });
+      this.selectedFile = new File([blob], fileData.name, { type: fileData.type });
+
+      console.log('Loaded file from session storage --> Name:', this.selectedFile.name);
     }
   }
 
-  // Reset the file and preview, and clear localStorage
   resetFile(): void {
     this.selectedFile = null;
     this.fileContent = null;
     this.isLoading = false;
-    this.clearSessionStorage();  // Clear localStorage when resetting
-  }
-
-
-
-  // If the user navigates back within 20 seconds, cancel the removal
-  cancelRemoveTimeout(): void {
-    if (this.removeTimeout) {
-      clearTimeout(this.removeTimeout);
-    }
-  }
-
-// Clear sessionStorage and clear the timeout when the data is removed
-clearSessionStorage(): void {
-  sessionStorage.removeItem(this.localStorageKey);
-  console.log('Data removed from sessionStorage');
-
-  // Clear the timeout if it's set
-  if (this.removeTimeout) {
-    clearTimeout(this.removeTimeout);
-    this.removeTimeout = null; // Set it to null to avoid future unintended clearings
-    console.log('Timeout cleared after removing data');
-  }
-}
-
-// When the component is destroyed, remove the data after 20 seconds if the user doesn't return
-ngOnDestroy(): void {
-  this.removeTimeout = setTimeout(() => {
     this.clearSessionStorage();
-    console.log("from Time interval----------------");
-  }, 20000);  // Remove the list after 20 seconds
+  }
+
+  clearSessionStorage(): void {
+    sessionStorage.removeItem(this.sessionStorageKey);
+    sessionStorage.removeItem(this.fileStorageKey);
+    console.log('Data removed from session storage');
+  }
 }
-
-}
-
-
-/*
-Changes Implemented:
-Save to LocalStorage:
-
-After parsing the CSV or XML file, the fileContent is saved to localStorage via saveToLocalStorage().
-Load from LocalStorage on Component Init:
-
-When the component is initialized (ngOnInit), the fileContent is loaded from localStorage if it exists.
-Clear LocalStorage:
-
-The data is cleared from localStorage upon file upload, reset, or after 20 seconds of the component being destroyed (using the ngOnDestroy() lifecycle hook).
-Timeout Logic:
-
-A timeout is set when the component is destroyed, which will clear localStorage after 20 seconds. If the user navigates back within 20 seconds, you can call cancelRemoveTimeout() to cancel the timeout.
-Testing the Logic:
-Scenario 1: User selects a file:
-The file content is parsed and saved to localStorage.
-Scenario 2: User navigates away and returns within 20 seconds:
-The content is loaded back from localStorage.
-Scenario 3: User navigates away and returns after 20 seconds:
-The localStorage is cleared after 20 seconds, and the content is no longer available.
-Scenario 4: User uploads the file:
-The localStorage is cleared immediately after a successful upload.
-Let me know if you need any further changes!
-*/

@@ -69,10 +69,12 @@
 
     <!-- Action Buttons -->
     <div class=" md:col-span-2 gap-10   w-full flex justify-evenly  h-10 mt-auto mx-auto justify-self-center	">
-      <button type="button" (click)="onClose()" class="w-1/2 md:w-1/4 text-white bg-gray-400 hover:bg-red-500 font-medium rounded-lg px-5 py-2.5 text-center">
+      <button type="button" (click)="onClose()" class="w-1/2 md:w-1/4 text-white bg-gray-400 hover:bg-red-500 font-medium rounded-lg px-5 py-2.5 text-center shadow-lg transform transition-transform hover:-translate-y-1 duration-300 ease-in-out
+      focus:outline-none focus:ring-2 focus:ring-opacity-50">
         Cancel
       </button>
-      <button   *ngIf="!isViewMode" type="submit" class="w-1/2 md:w-1/4 text-white bg-blue-800 hover:bg-blue-900 font-medium rounded-lg px-5 py-2.5 text-center" [disabled]="businessCardDialogForm.invalid">
+      <button   *ngIf="!isViewMode" type="submit" class="w-1/2 md:w-1/4 text-white bg-blue-800 hover:bg-blue-900 font-medium rounded-lg px-5 py-2.5 text-center shadow-lg transform transition-transform hover:-translate-y-1 duration-300 ease-in-out
+      focus:outline-none focus:ring-2 focus:ring-opacity-50 cursor-pointer" [disabled]="businessCardDialogForm.invalid">
         Submit
       </button>
     </div>

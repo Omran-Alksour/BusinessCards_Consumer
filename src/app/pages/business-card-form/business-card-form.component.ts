@@ -5,7 +5,6 @@ import {
   OnChanges,
   Output,
 } from '@angular/core';
-import { IBusinessCard } from '../shared/models/BusinessCard';
 import {
   FormGroup,
   FormBuilder,

@@ -13,7 +13,8 @@
     <p class="hidden md:block text-gray-500 mb-1">or</p>
 
     <!-- Browse Button -->
-    <button type="button" class="bg-blue-800 hover:bg-blue-600 text-white py-2 px-4 rounded" (click)="fileInput.click()">Browse for file</button>
+    <button type="button" class="bg-blue-800 hover:bg-blue-600 text-white py-2 px-4 rounded shadow-lg transform transition-transform hover:-translate-y-1 duration-300 ease-in-out
+    focus:outline-none " (click)="fileInput.click()">Browse for file</button>
   </div>
 
   <!-- Hidden File Input -->
@@ -36,10 +37,10 @@
     <!-- Image Preview -->
     <div class="w-4/12 h-16">
       <p class="text-xs">Preview:</p>
-      <img [src]="previewUrl" alt="Image preview" class="h-full object-cover">
+      <img [src]="previewUrl" alt="Image preview" class="h-full object-cover"  (error)="this.previewUrl='assets/images/default_image.png'">
     </div>
   </div>
 </div>
 <div *ngIf="isViewMode" class="w-10/12  flex justify-center align-middle ">
-  <img   [src]="previewUrl" alt="Image preview"  class="object-cover w-full  mx-auto my-auto">
+  <img   [src]="previewUrl" alt="Image preview"  class="object-cover w-full  mx-auto my-auto"  (error)="this.previewUrl='assets/images/default_image.png'">
 </div>

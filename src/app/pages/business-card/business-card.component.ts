@@ -3,7 +3,6 @@ import { ModelComponent } from '../shared/ui/model/model.component';
 import { BussineesCardFormComponent } from '../business-card-form/business-card-form.component';
 import { ToastrService } from 'ngx-toastr';
 import { BusinessCardService } from '../../services/BusinessCard/business-card.service';
-import { IBusinessCard } from '../shared/models/BusinessCard';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ExportService } from '../../services/Files/Export/export.service';

@@ -8,6 +8,13 @@ body {
   font-size: 1rem;
   @apply bg-slate-50;
 
+  .custom-input {
+    @apply form-control w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-800   dark:border-gray-600 dark:placeholder-gray-400 filter-none ;
+  }
+  .input-label {
+    @apply block mb-2 font-medium text-gray-700 dark:text-gray-900;
+  }
+
   .flat-btn-blue {
     @apply font-semibold w-fit mt-auto text-sm sm:text-base h-10 mx-2 rounded-md px-4 flex items-center justify-evenly
       bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 text-white
@@ -36,11 +43,28 @@ body {
    }
   }
 
+  .fblue-bg-text{
+    color: rgb(30 64 175 / var(--tw-text-opacity)) ;
+    background-color: white;
+    border:1px solid rgb(30 64 175 / var(--tw-text-opacity)) ;
+    // box-shadow: none !important;
+    &:hover {
+      color: white !important;
+      background-color: rgb(30 64 175 / var(--tw-text-opacity)) ;
+      border:1px solid white ;
+    }
+    &:focus{
+      outline: none !important;
+      box-shadow: none !important;
+      border:2px dashed ;
+    }
+
+ }
 }
 
 @layer components {
   .form-control {
-    @apply bg-gray-50 border border-gray-300 text-purple-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500;
+    @apply bg-gray-50 border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5  dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-400 text-gray-800 focus:text-gray-800 dark:focus:ring-blue-500 dark:focus:border-blue-500;
   }
 
   .form-error {

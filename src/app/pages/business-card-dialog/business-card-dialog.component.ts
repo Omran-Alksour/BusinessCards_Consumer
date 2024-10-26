@@ -1,4 +1,4 @@
-import {Component,EventEmitter,Input,OnChanges,Output,} from '@angular/core';
+import {Component,EventEmitter,Input,OnChanges,OnInit,Output,} from '@angular/core';
 import {FormGroup,FormBuilder,FormControl,Validators,ReactiveFormsModule} from '@angular/forms';
 import { CommonModule, formatDate } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -6,35 +6,39 @@ import { BusinessCardService } from '../../services/BusinessCard/business-card.s
 import { ToastrService } from 'ngx-toastr';
 import { MatDialogRef } from '@angular/material/dialog';
 import { ImageUploadComponent } from "../shared/components/image-upload/image-upload.component";
+import { QrCodeComponent } from '../shared/components/qr-code/qr-code.component';
+import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-bussineesCard-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, ImageUploadComponent],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, ImageUploadComponent,QrCodeComponent],
   templateUrl: './business-card-dialog.component.html',
   styleUrl: './business-card-dialog.component.scss',
 })
-export class BusinessCardDialogComponent implements OnChanges {
+export class BusinessCardDialogComponent implements OnChanges, OnInit  {
   @Input() data: IBusinessCard | null = null;
   @Output() onCloseModel = new EventEmitter();
 
   businessCardDialogForm!: FormGroup;
   isViewMode: boolean = false
   currentCard:IBusinessCard |null = null
+  subscription!: Subscription;
+
 
   constructor(
     private fb: FormBuilder,
-    private businessCardservice: BusinessCardService,
+    private businessCardService: BusinessCardService,
     private toastr: ToastrService,
     private dialogRef: MatDialogRef<BusinessCardDialogComponent>
 
   ) {
-    this.isViewMode=this.businessCardservice.isViewMode;
-    this.currentCard = this.businessCardservice.currentBusinessCard;
+    this.isViewMode=this.businessCardService.isViewMode;
+    this.currentCard = this.businessCardService.currentBusinessCard;
 
     this.businessCardDialogForm = this.fb.group({
       name: new FormControl(this.currentCard?.name || '', [Validators.required]),
       email: new FormControl(this.currentCard?.email || '', [Validators.required, Validators.email]),
-      phone: new FormControl(this.currentCard?.phone || '', [Validators.required]),
+      phoneNumber: new FormControl(this.currentCard?.phoneNumber || '', [Validators.required]),
       gender: new FormControl(this.currentCard?.gender || '', [Validators.required]),
       dateOfBirth: new FormControl(this.currentCard ? formatDate(this.currentCard.dateOfBirth, 'yyyy-MM-dd', 'en') : '', [Validators.required]),
       address: new FormControl(this.currentCard?.address || '', [Validators.required]),
@@ -48,12 +52,32 @@ export class BusinessCardDialogComponent implements OnChanges {
   disableFormControls(): void {
     this.businessCardDialogForm.get('name')?.disable();
     this.businessCardDialogForm.get('email')?.disable();
-    this.businessCardDialogForm.get('phone')?.disable();
+    this.businessCardDialogForm.get('phoneNumber')?.disable();
     this.businessCardDialogForm.get('gender')?.disable();
     this.businessCardDialogForm.get('dateOfBirth')?.disable();
     this.businessCardDialogForm.get('address')?.disable();
     this.businessCardDialogForm.get('photo')?.disable();
   }
+//update from QR Code
+
+ngOnInit() {
+  // Subscribe to changes in the currentBusinessCard
+  this.subscription = this.businessCardService.currentBusinessCard$.subscribe(card => {
+    if (card) {
+      debugger;
+      this.businessCardDialogForm.patchValue({
+        name: card.name,
+        email: card.email,
+        phoneNumber: card.phoneNumber,
+        address: card.address,
+        gender: card.gender,
+        dateOfBirth:formatDate(card.dateOfBirth, 'yyyy-MM-dd', 'en'),
+        photo: card.photo
+      });
+    }
+  });
+}
+
 
 
   onClose() {
@@ -61,11 +85,12 @@ export class BusinessCardDialogComponent implements OnChanges {
    }
 
   ngOnChanges(): void {
+    debugger;
  if (this.data) {
       this.businessCardDialogForm.patchValue({
         name: this.data.name,
         email: this.data.email,
-        phone: this.data.phone,
+        phoneNumber: this.data.phoneNumber,
         gender: this.data.gender,
         dateOfBirth: formatDate(this.data.dateOfBirth, 'yyyy-MM-ddTHH:mm:ssZ', 'en'),
         address: this.data.address,
@@ -84,7 +109,7 @@ export class BusinessCardDialogComponent implements OnChanges {
 
       debugger;
       if (this.data?.id) {
-        this.businessCardservice
+        this.businessCardService
           .updateBusinessCard(this.data.id as string, this.businessCardDialogForm.value)
           .subscribe({
             next: (response: any) => {
@@ -94,7 +119,7 @@ export class BusinessCardDialogComponent implements OnChanges {
             },
           });
       } else {
-const { newBusinessCard, postObservable } = this.businessCardservice.createBusinessCard(this.businessCardDialogForm.value);
+const { newBusinessCard, postObservable } = this.businessCardService.createBusinessCard(this.businessCardDialogForm.value);
 
 postObservable.subscribe({
   next: (response: any) => {
@@ -124,5 +149,12 @@ postObservable.subscribe({
   resetBussineesCardForm() {
     this.businessCardDialogForm.reset();
     this.dialogRef.close();
+  }
+
+
+  ngOnDestroy() {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 }

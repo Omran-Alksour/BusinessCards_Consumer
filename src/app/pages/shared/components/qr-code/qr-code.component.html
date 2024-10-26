@@ -1,0 +1,30 @@
+<div  *ngIf="!isViewMode" class="mb-2  " title="Select a QR Code image to auto-fill the business card form">
+  <button type="button" mat-raised-button class=" w-full  text-sm sm:text-base custom-flat-btn p-2 flex flex-row justify-between fblue-bg-text   shadow-lg  md:justify-self-end " color="primary" (click)="triggerFileInputClick(fileInput)">
+    <mat-icon >format_align_justify</mat-icon>
+    <span class="relative flex h-3 w-3 bottom-0">
+
+      <span class="animate-ping left-2 right-2 absolute inline-flex h-full w-full rounded-full bg-blue-950 opacity-75"></span>
+      <!-- <span class="relative inline-flex rounded-full h-3 w-3 bg-blue-700"></span> -->
+    </span>
+    <mat-icon class="text-md  mx-auto mt-auto">rotate_90_degrees_ccw</mat-icon>
+
+    <mat-icon >qr_code_scanner</mat-icon></button>
+
+  <input
+    type="file"
+    #fileInput
+    (change)="onFileSelected($event)"
+    accept="image/png, image/jpeg, image/jpg, image/gif"
+    style="display: none"
+  />
+
+  <div *ngIf="errorMessage" class="text-red-400">
+    {{ errorMessage }}
+  </div>
+</div>
+
+<button *ngIf="isViewMode" (click)="generateAndDownloadQrCode()"  type="button" mat-raised-button class=" w-full  text-sm sm:text-base custom-flat-btn p-2 flex flex-row justify-between fblue-bg-text   shadow-lg  justify-self-end gap-4 "
+title="Download the Business Card as a QR Code" color="primary" >
+  <mat-icon class="scale-150" >download</mat-icon>
+  <mat-icon class="scale-150">qr_code</mat-icon>
+</button>

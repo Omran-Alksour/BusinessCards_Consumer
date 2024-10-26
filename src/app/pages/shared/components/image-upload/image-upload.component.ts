@@ -12,6 +12,8 @@ import { MatIconModule } from '@angular/material/icon';
   imports: [CommonModule, FormsModule, MatIconModule]
 })
 export class ImageUploadComponent {
+
+
   @Input() base64Value: string | null = null;
   @Output() photo = new EventEmitter<string>();
 
@@ -94,4 +96,18 @@ debugger;
       }
     });
   }
+
+  base46Changed($event: Event) {
+    let inputValue = ($event.target as HTMLInputElement).value.trim();
+
+    if (!inputValue.startsWith("data:image/")) {
+      inputValue = `data:image/png;base64,${inputValue}`;
+      ($event.target as HTMLInputElement).value = inputValue;
+    }
+    this.photo.emit(inputValue);
+    this.previewUrl = inputValue;
+  }
+
+
+
 }

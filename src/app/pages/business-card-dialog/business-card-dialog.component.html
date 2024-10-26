@@ -1,18 +1,20 @@
-<div class="custom-dialog p-6 rounded-lg shadow-lg w-full mx-auto">
-  <h2 class="mb-5 font-bold tracking-tight text-gray-900 dark:text-gray-900">Business Card Details</h2>
-
-  <form [formGroup]="businessCardDialogForm" class="w-full grid grid-cols-1 md:grid-cols-2 gap-5" (ngSubmit)="onSubmit()" novalidate>
+<div class="custom-dialog p-6 rounded-lg w-full mx-auto " >
+  <div class=" flex flex-col  md:flex-row justify-center items-center md:justify-between ">
+    <h2 class="mb-5 font-bold tracking-tight text-gray-900 dark:text-gray-900">Business Card Details</h2>
+    <app-qr-code  *ngIf="!isViewMode"></app-qr-code>
+  </div>
+  <form [formGroup]="businessCardDialogForm" class="w-full grid grid-cols-1 md:grid-cols-2 gap-2  md:gap-5" (ngSubmit)="onSubmit()" novalidate>
     <!-- Photo Upload Section (Square) -->
     <div [ngClass]="{ 'border-2 border-blue-800': !isViewMode }" class="  p-2 rounded-md w-full flex flex-col justify-start">
-      <app-image-upload  (photo)="onPhotoBase64Change($event)" [base64Value]="businessCardDialogForm.get('photo')?.value"></app-image-upload>
+    <app-image-upload  (photo)="onPhotoBase64Change($event)" [base64Value]="businessCardDialogForm.get('photo')?.value"></app-image-upload>
     </div>
 
-    <!-- Name , Email, Phone and Address -->
+    <!-- Name , Email, phoneNumber and Address -->
     <div class=" w-full grid grid-cols-2 md:grid-cols-2 gap-3">
       <!-- Name -->
       <div class="mb-5">
-        <label for="name" class="block mb-2 font-medium text-gray-700 dark:text-gray-900">Name</label>
-        <input   type="text" id="name" class="form-control w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-800 dark:bg-Violet-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Enter Name" formControlName="name">
+        <label for="name" class="input-label">Name</label>
+        <input   type="text" id="name" class="custom-input bg-transparent" placeholder="Enter Name" formControlName="name">
         <div *ngIf="businessCardDialogForm.get('name')?.hasError('required') && businessCardDialogForm.get('name')?.touched" class="text-red-500 text-sm mt-2">
           Name is required
         </div>
@@ -20,33 +22,33 @@
 
       <!-- Email -->
       <div class="mb-5">
-        <label for="email" class="block mb-2 font-medium text-gray-700 dark:text-gray-900">Email Address</label>
-        <input   type="email" id="email" class="form-control w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-800 dark:bg-Violet-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Enter Email Address" formControlName="email">
+        <label for="email" class="input-label">Email Address</label>
+        <input   type="email" id="email" class="custom-input" placeholder="Enter Email" formControlName="email">
         <div *ngIf="businessCardDialogForm.get('email')?.hasError('required') && businessCardDialogForm.get('email')?.touched" class="text-red-500 text-sm mt-2">
           Email is required
         </div>
       </div>
-          <!-- Phone -->
+          <!-- phoneNumber -->
           <div class="mb-5">
-            <label for="phone" class="block mb-2 font-medium text-gray-700 dark:text-gray-900">Phone</label>
-            <input    type="text" id="phone" class="form-control w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-800 dark:bg-Violet-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Enter Phone Number" formControlName="phone">
-            <div *ngIf="businessCardDialogForm.get('phone')?.hasError('required') && businessCardDialogForm.get('phone')?.touched" class="text-red-500 text-sm mt-2">
+            <label for="phoneNumber" class="input-label">Phone</label>
+            <input    type="text" id="phoneNumber" class="custom-input" placeholder="Enter Phone Number" formControlName="phoneNumber">
+            <div *ngIf="businessCardDialogForm.get('phoneNumber')?.hasError('required') && businessCardDialogForm.get('phoneNumber')?.touched" class="text-red-500 text-sm mt-2">
               Phone is required
             </div>
           </div>
 
           <!-- Address -->
           <div class="mb-5">
-            <label for="address" class="block mb-2 font-medium text-gray-700 dark:text-gray-900">Address</label>
-            <input   type="text" id="address" class="form-control w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-800 dark:bg-Violet-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" placeholder="Enter Address" formControlName="address">
+            <label for="address" class="input-label">Address</label>
+            <input   type="text" id="address" class="custom-input" placeholder="Enter Address" formControlName="address">
             <div *ngIf="businessCardDialogForm.get('address')?.hasError('required') && businessCardDialogForm.get('address')?.touched" class="text-red-500 text-sm mt-2">
               Address is required
             </div>
           </div>
          <!-- Gender -->
       <div>
-        <label for="gender" class="block mb-2 font-medium text-gray-700 dark:text-gray-900">Gender</label>
-        <select  id="gender" class="form-control w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-800 dark:bg-Violet-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" formControlName="gender">
+        <label for="gender" class="input-label">Gender</label>
+        <select  id="gender" class="custom-input" formControlName="gender">
           <option value="" disabled>Select Gender</option>
           <option value="1">Male</option>
           <option value="2">Female</option>
@@ -58,8 +60,8 @@
 
       <!-- Date of Birth -->
       <div>
-        <label for="dateOfBirth" class="block mb-2 font-medium text-gray-700 dark:text-gray-900">Date of Birth</label>
-        <input type="date" id="dateOfBirth" class="form-control w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-800 dark:bg-Violet-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" formControlName="dateOfBirth">
+        <label for="dateOfBirth" class="input-label">Date of Birth</label>
+        <input type="date" id="dateOfBirth" class="custom-input" formControlName="dateOfBirth">
         <div *ngIf="businessCardDialogForm.get('dateOfBirth')?.hasError('required') && businessCardDialogForm.get('dateOfBirth')?.touched" class="text-red-500 text-sm mt-2">
           Date of Birth is required
         </div>
@@ -69,12 +71,14 @@
 
     <!-- Action Buttons -->
     <div class=" md:col-span-2 gap-10   w-full flex justify-evenly  h-10 mt-auto mx-auto justify-self-center	">
+      <app-qr-code  *ngIf="isViewMode"></app-qr-code>
+
       <button type="button" (click)="onClose()" class="w-1/2 md:w-1/4 text-white bg-gray-400 hover:bg-red-500 font-medium rounded-lg px-5 py-2.5 text-center shadow-lg transform transition-transform hover:-translate-y-1 duration-300 ease-in-out
       focus:outline-none focus:ring-2 focus:ring-opacity-50">
         Cancel
       </button>
       <button   *ngIf="!isViewMode" type="submit" class="w-1/2 md:w-1/4 text-white bg-blue-800 hover:bg-blue-900 font-medium rounded-lg px-5 py-2.5 text-center shadow-lg transform transition-transform hover:-translate-y-1 duration-300 ease-in-out
-      focus:outline-none focus:ring-2 focus:ring-opacity-50 cursor-pointer" [disabled]="businessCardDialogForm.invalid">
+      focus:outline-none focus:ring-2 focus:ring-opacity-50 cursor-pointer " [disabled]="businessCardDialogForm.invalid">
         Submit
       </button>
     </div>

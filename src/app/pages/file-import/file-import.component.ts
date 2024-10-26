@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import * as Papa from 'papaparse';
 import { CommonModule } from '@angular/common';
-import { ModelComponent } from '../shared/ui/model/model.component';
 import { RouterLink } from '@angular/router';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatIconModule } from '@angular/material/icon';
@@ -11,7 +10,7 @@ import { ImportService } from '../../services/Files/Import/import.service';
 @Component({
   selector: 'app-file-import',
   standalone: true,
-  imports: [CommonModule, ModelComponent, RouterLink, MatProgressSpinnerModule, MatIconModule],
+  imports: [CommonModule, RouterLink, MatProgressSpinnerModule, MatIconModule],
   templateUrl: './file-import.component.html',
   styleUrls: ['./file-import.component.scss']
 })
@@ -118,7 +117,7 @@ export class FileImportComponent implements OnInit {
         name: normalizedRow['Name'] || '',
         gender: parseInt(normalizedRow['Gender'], 10) || 0,
         email: normalizedRow['Email'] || '',
-        phone: normalizedRow['PhoneNumber'] || '',//|| normalizedRow['Phone']
+        phoneNumber: normalizedRow['PhoneNumber'] || '',//|| normalizedRow['phoneNumber']
         dateOfBirth: normalizedRow['DateOfBirth'] || '',
         address: normalizedRow['Address'] || '',
         photo: normalizedRow['Photo'] || 'assets/images/default_image.png',
@@ -166,7 +165,7 @@ export class FileImportComponent implements OnInit {
         name: card.getElementsByTagName('Name')[0]?.textContent || '',
         gender: parseInt(card.getElementsByTagName('Gender')[0]?.textContent || '0', 10),
         email: card.getElementsByTagName('Email')[0]?.textContent || '',
-        phone: card.getElementsByTagName('PhoneNumber')[0]?.textContent || '',
+        phoneNumber: card.getElementsByTagName('PhoneNumber')[0]?.textContent || '',
         dateOfBirth: card.getElementsByTagName('DateOfBirth')[0]?.textContent || '',
         address: card.getElementsByTagName('Address')[0]?.textContent || '',
         photo: card.getElementsByTagName('Photo')[0]?.textContent || 'assets/images/default_image.png',

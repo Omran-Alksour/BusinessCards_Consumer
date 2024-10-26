@@ -27,7 +27,7 @@
     <!-- Base64 Input (Optional) -->
     <div class="h-16 w-1/2">
       <label for="base64Input" class="block mb-2 text-xs">Base64:</label>
-      <textarea id="base64Input" rows="2" placeholder="example:data:image/png;base64,iV..." class="hidden-scrollbar focus:text-blue-700 w-full p-3 border border-gray-300 rounded-md outline-1 outline-blue-800" [value]="base64Value" readonly>
+      <textarea id="base64Input"  (change)="base46Changed($event)" rows="2" placeholder="example:data:image/png;base64,iV..." class="hidden-scrollbar focus:text-blue-700 w-full p-3 border border-gray-300 rounded-md outline-1 outline-blue-800" [value]="base64Value" >
       </textarea>
     </div>
 

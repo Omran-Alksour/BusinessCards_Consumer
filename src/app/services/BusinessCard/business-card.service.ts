@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 
@@ -11,7 +11,17 @@ export class BusinessCardService {
   BASE_URL = environment.BASE_URL;
 
   isViewMode: boolean = false;
-  currentBusinessCard:IBusinessCard|null = null;
+
+  private _currentBusinessCard = new BehaviorSubject<IBusinessCard | null>(null);
+  currentBusinessCard$ = this._currentBusinessCard.asObservable();
+
+  set currentBusinessCard(value: IBusinessCard | null) {
+    this._currentBusinessCard.next(value);
+  }
+
+  get currentBusinessCard(): IBusinessCard | null {
+    return this._currentBusinessCard.value;
+  }
 
   constructor(private http: HttpClient) {}
 
@@ -108,7 +118,13 @@ createBusinessCard(businessCard: IBusinessCard): { newBusinessCard: IBusinessCar
       const formData = new FormData();
       formData.append('photoFile', file);
 
-      return this.http.post<ApiResponse<string>>(`${this.BASE_URL}/convertToBase64`, formData);
+      return this.http.post<ApiResponse<string>>(`${this.BASE_URL}/convertImageToBase64`, formData);
     }
 
+
+    generateQrCode(businessCard: IBusinessCard): Observable<Blob> {
+      return this.http.post(`${this.BASE_URL}/generateQrCode`, businessCard, {
+        responseType: 'blob',
+      });
+    }
 }

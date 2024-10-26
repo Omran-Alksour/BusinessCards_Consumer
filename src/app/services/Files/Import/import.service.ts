@@ -20,4 +20,22 @@ export class ImportService {
       formData
     );
   }
+
+
+  decodeQrCode(file: File): Observable<ApiResponse<IBusinessCard>> {
+    const formData = new FormData();
+    formData.append('QRCodeFile', file);
+
+    return this.http.post<ApiResponse<IBusinessCard>>(
+      `${this.BASE_URL}/decodeQrCode`,
+      formData
+    );
+  }
+
+
+  generateQrCode(businessCard: any): Observable<Blob> {
+    return this.http.post(`${this.BASE_URL}/generateQrCode`, businessCard, { responseType: 'blob' });
+  }
+
+
 }

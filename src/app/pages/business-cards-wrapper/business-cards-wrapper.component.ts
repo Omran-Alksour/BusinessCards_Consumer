@@ -31,7 +31,7 @@ export class BusinessCardsWrapperComponent {
 
 
 
-  displayedColumns: string[] = ['select', 'id','name',  'email', 'phone', 'photo','lastUpdateAt', 'actions'];
+  displayedColumns: string[] = ['select', 'id','name',  'email', 'phoneNumber', 'photo','lastUpdateAt', 'actions'];
   dataSource = new MatTableDataSource<IBusinessCard>([]);
   selectedRows: IBusinessCard[] = [];
   fullPage: IBusinessCard[] = [];
@@ -52,10 +52,11 @@ export class BusinessCardsWrapperComponent {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
+
   smallScreenColumns: string[] = ['select', 'name', 'actions'];
-  mediumScreenColumns: string[] = ['select', 'name', 'email', 'phone', 'actions'];
-  largeScreenColumns: string[] = ['select', 'id', 'name', 'email',/* 'phone',*/ 'photo', 'lastUpdateAt', 'actions'];
-  listingPageSizeOptions:number[] = [8, 20, 30, 40,50]
+  mediumScreenColumns: string[] = ['select', 'name', 'email', 'phoneNumber', 'actions'];
+  largeScreenColumns: string[] = ['select', 'id', 'name', 'email','lastUpdateAt',/* 'phoneNumber',*/ 'photo',  'actions'];
+  listingPageSizeOptions:number[] = [10, 20, 30, 40,50]
 
   constructor(private dialog: MatDialog, private businessCardservice: BusinessCardService,
         private exportService: ExportService, private breakpointObserver: BreakpointObserver,
@@ -142,6 +143,7 @@ export class BusinessCardsWrapperComponent {
           }
 
           this.typingTimeout = setTimeout(() => {
+            this.selectedRows.length =0;
             this.getBusinessCards(this.currentPage, this.pageSize, this.orderBy, this.orderDirection, this.search);
           }, 1400);
     }
@@ -238,5 +240,15 @@ openBusinessCardDialog() {
 
     });
 }
+
+generateAndDownloadQrCode(businessCard:IBusinessCard): void {
+
+  if (!businessCard || !businessCard.name) {
+    console.log('Please provide a valid business card.');
+    return;
+  }
+  this.exportService.generateAndDownloadQrCode(businessCard);
+}
+
 }
 

@@ -4,7 +4,7 @@ interface IBusinessCard {
   gender: number;
   dateOfBirth: string;
   email: string;
-  phone: string;
+  phoneNumber: string;
   address: string;
   photo?: string;
   lastUpdateAt?: string;

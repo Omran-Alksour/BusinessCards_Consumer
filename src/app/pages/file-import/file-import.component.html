@@ -54,11 +54,12 @@
 
 
   <!-- Display Parsed Business Cards -->
-  <h4 class="font-bold text-2xl m-5 text-blue-800 dark:text-blue-800">Parsed Business Cards</h4>
+  <h4 *ngIf="fileContent&&fileContent.length>0" class="font-bold text-2xl m-5 text-blue-800 dark:text-blue-800">Parsed Business Cards</h4>
   <div *ngIf="fileContent && fileContent.length > 0" class="overflow-x-auto mt-7">
     <table class="w-full text-sm text-left text-blue-500 dark:text-gray-400">
       <thead class="text-xs text-bllue-900 uppercase bg-gray-50  dark:text-gray-900 font-extrabold rounded-lg">
         <tr>
+          <th scope="col" class="my-0 px-3 md:py-3  ">#</th>
           <th scope="col" class="my-0 px-6 md:py-3  ">Name</th>
           <th scope="col" class="my-0 px-6 md:py-3  ">Email</th>
           <th scope="col" class="my-0 px-6 md:py-3  ">Gender</th>
@@ -69,12 +70,13 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let element of fileContent" class=" text-nowrap bg-white border-b dark:text-gray-500 dark:border-gray-500 max-h-12">
-          <td class="px-2 md:px-6 py-2">{{ element.name }}</td>
+        <tr *ngFor="let element of fileContent; let i = index" class=" text-nowrap bg-white border-b dark:text-gray-500 dark:border-gray-500 max-h-12">
+          <td class="px-2 md:px-3 py-2"> {{i+1 }}</td>
+          <td class="px-2 md:px-6 py-2"> {{ element.name }}</td>
           <td class="px-2 md:px-6 py-2">{{ element.email }}</td>
           <td class="px-2 md:px-6 py-2">{{ element.gender === 1 ? 'Male' : 'Female' }}</td>
           <td class="px-2 md:px-6 py-2 text-xs text-nowrap">{{ element.dateOfBirth | date: 'MMM d, yyyy'  }}</td>
-          <td class="px-2 md:px-6 py-2">{{ element.phone }}</td>
+          <td class="px-2 md:px-6 py-2">{{ element.phoneNumber }}</td>
           <td class="px-2 md:px-6 py-2">{{ element.address }}</td>
           <td class="px-2 md:px-6 py-2">
             <img [src]="element.photo" alt="Photo" class="h-10 object-contain" *ngIf="element.photo"  (error)="this.element.photo='assets/images/default_image.png'" />
